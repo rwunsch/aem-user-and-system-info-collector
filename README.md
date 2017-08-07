@@ -12,7 +12,7 @@ Short Intro: https://www.youtube.com/watch?v=VnZpn0vpStU
 -u : user login (default is prompted if online mode)  
 -p : password  
 -a : server url e.g. http://localhost:4502 (default is prompted if online mode)  
--c : CSV-file: define server-url (-a), servername (-d), login(-u), password(-p)                                                                                                                                                                                          for batch collection
+-c : CSV-file: define server-url (-a), servername (-d), login(-u), password(-p) for batch collection  
 -d : destination folder/directory (default 'server-info'-folder , folder will be deleted on '-z' option for cleanup)  
 -t : Connection Timeout (default 30sec)  
 -w : wait time (for reading feedback) in sec (default: 3 sec). For production set to 0  
