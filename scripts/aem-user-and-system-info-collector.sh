@@ -78,32 +78,32 @@ function usage() {
 	echo "-p : password" 1>&2
 	echo "-a : server url e.g. http://localhost:4502 (default is prompted if online mode)" 1>&2
 	echo "-c : CSV-file: define server-url (-a), servername (-d), login(-u), password(-p)  for batch collection" 1>&2
-	echo "-d : destination folder/directory (default 'server-info'-folder)" 1>&2
+	echo "-d : destination folder/directory default 'server-info'-folder , folder will be deleted on '-z' option for cleanup)" 1>&2
 	echo "-t : Connection Timeout (default 30sec)" 1>&2
 	echo "-v : more verbose output" 1>&2
-	echo "-w : wait time (for reading feedback) in sec (default: 3 sec). For production set to 0"
-	echo "-z : zip output" 1>&2
-	echo "-n : only query users and creates 'all_users.csv' in folder 'users'"
+	echo "-w : wait time (for reading feedback) in sec (default: 3 sec). For production set to 0" 1>&2
+	echo "-z : zip output (files and folders , '-d' folder will be deleted for cleanup)" 1>&2
+	echo "-n : only query users and creates 'all_users.csv' in folder 'users'" 1>&2
 	echo ""
 	echo "---------------------"
-	echo "Sample Usage: "
+	echo "Sample Usage: " 1>&2
 	echo "---------------------"
-	echo "ONE SERVER:"
+	echo "ONE SERVER:" 1>&2
 	echo "./aem-user-and-system-info-collector.sh  -v -z -t 10 -u admin -p admin -a http://localhost:4502 -d 'info_localhost_4502'" 1>&2
 	echo ""
-	echo "MULTIPLE SERVER:"
+	echo "MULTIPLE SERVER:" 1>&2
 	echo "./aem-user-and-system-info-collector.sh  -v -z -t 10 -c example-list-of-servers.csv -d 'info_all_servers'" 1>&2
 	echo ""
-	echo "MULTIPLE SERVER - USERS ONLY:"
+	echo "MULTIPLE SERVER - USERS ONLY:" 1>&2
 	echo "./aem-user-and-system-info-collector.sh  -v -t 10 -c example-list-of-servers.csv -d 'info_all_servers'" 1>&2
 	echo "---------------------"
 	echo ""
 	echo "---------------------"
-	echo "CSV File - Content"
+	echo "CSV File - Content" 1>&2
 	echo "---------------------"
-	echo "http://localhost:4502,AEM_6.1_Server-Donald,admin,admin"  
-	echo "http://localhost:4504,AEM_5.6.1_Server-Dagobert,username,password"
-	echo "http://localhost:4506,AEM_6.2_Server-Goofy,wunsch,c3$6gbH+!" 
+	echo "http://localhost:4502,AEM_6.1_Server-Donald,admin,admin"  1>&2
+	echo "http://localhost:4504,AEM_5.6.1_Server-Dagobert,username,password" 1>&2
+	echo "http://localhost:4506,AEM_6.2_Server-Goofy,wunsch,c3$6gbH+!" 1>&2
 	echo ""
 	echo "---------------------"
 	exit 1
