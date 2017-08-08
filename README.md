@@ -13,11 +13,11 @@ Short Intro: https://www.youtube.com/watch?v=VnZpn0vpStU
 -p : password  
 -a : server url e.g. http://localhost:4502 (default is prompted if online mode)  
 -c : CSV-file: define server-url (-a), servername (-d), login(-u), password(-p) for batch collection  
--d : destination folder/directory (default 'server-info'-folder , folder will be deleted on '-z' option for cleanup)  
+-d : destination folder/directory default 'collected-info'-folder, if this folder does not exist, it will be created, and deleted on zipping (on flag '-z')  
 -t : Connection Timeout (default 30sec)  
 -w : wait time (for reading feedback) in sec (default: 3 sec). For production set to 0  
 -v : more verbose output  
--z : ZIP output (files and folders , '-d' folder will be deleted for cleanup)  
+-z : zip output (files and folders , '-d' folder 'collected-info' will be deleted for cleanup)  
 -n : only query users and creates 'all_users.csv' in folder 'users' (all other information is NOT collected)
 
 
