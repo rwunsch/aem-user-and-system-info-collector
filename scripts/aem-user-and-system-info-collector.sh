@@ -78,11 +78,11 @@ function usage() {
 	echo "-p : password" 1>&2
 	echo "-a : server url e.g. http://localhost:4502 (default is prompted if online mode)" 1>&2
 	echo "-c : CSV-file: define server-url (-a), servername (-d), login(-u), password(-p)  for batch collection" 1>&2
-	echo "-d : destination folder/directory default 'server-info'-folder , folder will be deleted on '-z' option for cleanup)" 1>&2
+	echo "-d : destination folder/directory default 'collected-info'-folder, if this folder does not exist, it will be created, and deleted on zipping (on flag '-z')" 1>&2
 	echo "-t : Connection Timeout (default 30sec)" 1>&2
 	echo "-v : more verbose output" 1>&2
 	echo "-w : wait time (for reading feedback) in sec (default: 3 sec). For production set to 0" 1>&2
-	echo "-z : zip output (files and folders , '-d' folder will be deleted for cleanup)" 1>&2
+	echo "-z : zip output (files and folders , '-d' folder 'collected-info' will be deleted for cleanup)" 1>&2
 	echo "-n : only query users and creates 'all_users.csv' in folder 'users'" 1>&2
 	echo ""
 	echo "---------------------"
@@ -369,7 +369,7 @@ else
 fi
 
 if [ "$FLG_D" = "TRUE" ]; then
-  DIRECTORY=$VALUE_D
+  DIRECTORY=$VALUE_D/collected-info
 else
   DIRECTORY="collected-info"
 fi
