@@ -121,10 +121,11 @@ function getAemVersion(){
 	echo "-------------------------------------------"
 	echo "Checking AEM version"
 	echo "-------------------------------------------"
-	AEM_VERSION=$(curl -u $USER:$PASS -k $CURL_NON_VERBOSE $SERVERURL/system/console/productinfo | grep "Adobe Experience Manager" | awk -F'[()]' 'NR==5 {print substr($2,0,5)}')
-	echo "-----------------------------"
-	echo "AEM VERSION: " $AEM_VERSION
-	echo "-----------------------------"
+	AEM_VERSION=$(curl -u $USER:$PASS -k $CURL_NON_VERBOSE $SERVERURL/system/console/productinfo | grep "Adobe Experience Manager" | awk -F'[()]' '{print substr($2,0,3)}')
+	AEM_VERSION=${AEM_VERSION//[$'\t\r\n']}
+	echo "-------------------------------------------"
+	echo "AEM VERSION:  $AEM_VERSION"
+	echo "-------------------------------------------"
 }
 
 # Get 'configuration-status' of server as ZIP
@@ -146,9 +147,9 @@ function curlConfigurationStatus(){
 
 # Collecting "bundles.json" for use in tools from http://www.aemstuff.com/ -> Tools
 function curlBundleJson(){
-	echo "-------------------------"
+	echo "-------------------------------------------"
 	echo "Collecting 'bundles.json'"
-	echo "-------------------------"
+	echo "-------------------------------------------"
 	if [ "$VERBOSE" = true ] ; then
 		echo "executing: "
 		echo "	curl -u $USER:$PASSWORD -O -J -k $SERVERURL/system/console/bundles.json"
@@ -163,9 +164,9 @@ function curlBundleJson(){
 
 # Collecting "package_list.xml" for use in CQ Package Analyzer (http://sj1slm902 internal server on corp.adobe.com/)
 function curlCrxPackages(){
-	echo "-------------------------"
+	echo "-------------------------------------------"
 	echo "Collecting 'package_list.xml'"
-	echo "-------------------------"
+	echo "-------------------------------------------"
 	if [ "$VERBOSE" = true ] ; then
 		echo "executing: "
 		echo "	curl -u $USER:$PASSWORD -k -o package_list.xml $SERVERURL/crx/packmgr/service.jsp?cmd=ls"
@@ -176,12 +177,27 @@ function curlCrxPackages(){
 	curl -u $USER:$PASS -s -k -o "package_list.xml"  $CURL_NON_VERBOSE $SERVERURL"/crx/packmgr/service.jsp?cmd=ls"
 }
 
+# Collecting "oak-index-definitions.json" for use in Index Definition Analyzer (https://oakutils.appspot.com/analyze/index)
+function curlOakIndexDefinitions(){
+	echo "-------------------------------------------"
+	echo "Collecting 'oak-index-definitions.json'"
+	echo "-------------------------------------------"
+	if [ "$VERBOSE" = true ] ; then
+		echo "executing: "
+		echo "	curl -u $USER:$PASSWORD -k -o oak-index-definitions.json $SERVERURL/oak:index.tidy.-1.json"
+		echo "	-s : Does not output error messages"
+		echo "	-o : Download directory"
+		echo "	-k : allow insecure SSL connections"
+	fi
+	curl -u $USER:$PASS -s -k -o "oak-index-definitions.json"  $CURL_NON_VERBOSE $SERVERURL"/oak:index.tidy.-1.json"
+}
+
 
 # Collecting "users.json" to be able to determine named-users
 function curlUsersJson(){
-	echo "-----------------------"
+	echo "-------------------------------------------"
 	echo "Collecting 'users.json'"
-	echo "-----------------------"
+	echo "-------------------------------------------"
 	if [ "$VERBOSE" = true ] ; then
 		echo "executing: "
 		echo "	curl -u $USER:$PASSWORD -k -o users.json $SERVERURL/bin/querybuilder.json?property=jcr:primaryType&property.value=rep:User&p.limit=-1&p.hits=full&p.nodedepth=2"
@@ -192,26 +208,11 @@ function curlUsersJson(){
 	curl -u $USER:$PASS -s -k -o "users.json" $CURL_NON_VERBOSE $SERVERURL"/bin/querybuilder.json?property=jcr:primaryType&property.value=rep:User&p.limit=-1&p.hits=full&p.nodedepth=2"
 }
 
-# Collecting "indexes.json" to be able to check all indexes (Lucene indexes, OAK indexes)
-function curlIndexesJson(){
-	echo "------------------------"
-	echo "Collecting 'indexes.json'"
-	echo "------------------------"
-	if [ "$VERBOSE" = true ] ; then
-		echo "executing: "
-		echo "	curl -u $USER:$PASSWORD -o -k indexes.json $SERVERURL/oak:index.tidy.-1.json"
-		echo "	-s : Does not output error messages"
-		echo "	-o : Download directory"
-		echo "	-k : allow insecure SSL connections"
-	fi
-	curl -u $USER:$PASS -s -k -o "indexes.json" $CURL_NON_VERBOSE $SERVERURL"/oak:index.tidy.-1.json"
-}
-
 ### Retrive QueryPerformance Statistics (Slow Queries)
 function curlGraniteQueryPerformance(){
-	echo "------------------------"
+	echo "-------------------------------------------"
 	echo "Collecting 'graniteQueryPerfromance.html'"
-	echo "------------------------"
+	echo "-------------------------------------------"
 	if [ "$VERBOSE" = true ] ; then
 		echo "executing: "
 		echo "	curl -u $USER:$PASSWORD -s -o -k  graniteQueryPerformance.txt $SERVERURL/libs/granite/operations/content/diagnosis/tool.html/_granite_queryperformance"
@@ -222,15 +223,46 @@ function curlGraniteQueryPerformance(){
 	curl -u $USER:$PASS -s -k -o "graniteQueryPerformance.html" $CURL_NON_VERBOSE $SERVERURL"/libs/granite/operations/content/diagnosis/tool.html/_granite_queryperformance" 
 }
 
+### Retrive Systemoverview (since 6.4)
+function curlSystemOverview(){
+	echo "-------------------------------------------"
+	echo "Collecting 'systemOverview.json'"
+	echo "-------------------------------------------"
+	if [ "$VERBOSE" = true ] ; then
+		echo "executing: "
+		echo "	curl -u $USER:$PASSWORD -s -o -k  graniteQueryPerformance.txt $SERVERURL/libs/granite/operations/content/systemoverview/export.json"
+		echo "	-s : Does not output error messages"
+		echo "	-o : Download directory"
+		echo "	-k : allow insecure SSL connections"
+	fi
+	curl -u $USER:$PASS -s -k -o "systemOverview.json" $CURL_NON_VERBOSE $SERVERURL"/libs/granite/operations/content/systemoverview/export.json" 
+}
+
+### Retrive Sling Health Checks(since 6.4)
+function curlSlingHealthChecks(){
+	echo "-------------------------------------------"
+	echo "Collecting 'healthChecks.html'"
+	echo "-------------------------------------------"
+	if [ "$VERBOSE" = true ] ; then
+		echo "executing: "
+		echo "	curl -u $USER:$PASSWORD -s -o -k  graniteQueryPerformance.txt $SERVERURL/system/console/healthcheck?tags=&debug=true&overrideGlobalTimeout="
+		echo "	-s : Does not output error messages"
+		echo "	-o : Download directory"
+		echo "	-k : allow insecure SSL connections"
+	fi
+	curl -u $USER:$PASS -s -k -o "healthChecks.html" $CURL_NON_VERBOSE $SERVERURL"/system/console/healthcheck?tags=&debug=true&overrideGlobalTimeout=" 
+}
+
+
 ### Iterate through all folders, find "users.json", copy to "users" folder, rename to folder/server-name
 function getAllUserJsonAndStoreToOneFolder(){
 	USERS_FOLDER='users'
 	USERS_PREFIX='users_'
 	
-	echo "------------------------"
+	echo "-------------------------------------------"
 	echo "Collecting all 'users.json' and copy to 'users' folder. "
 	echo "Server name will become the filename."
-	echo "------------------------"	
+	echo "-------------------------------------------"	
 	## Create folder named 'users' underneath the folder defined in parameter '-d'
 	mkdir  -p "${PWD_ME}/${DIRECTORY}/${USERS_FOLDER}"
 	JSON_COUNT=1
@@ -252,10 +284,10 @@ function createUserCsvFromJsons(){
 	USERS_FOLDER='users'
 	USER_FILE_NAME='all_users'
 	
-	echo "------------------------"
+	echo "-------------------------------------------"
 	echo "Creating CSV files 'server-name'.csv from 'serve-name'.json. "
 	echo "Joining all CSV in a file '${USER_FILE_NAME}.csv'."
-	echo "------------------------"	
+	echo "-------------------------------------------"	
 
 	cd "${PWD_ME}/${DIRECTORY}/${USERS_FOLDER}"
 	
@@ -274,9 +306,9 @@ function createUserCsvFromJsons(){
 	echo "sep=," > "${USER_FILE_NAME}.xls"
 	cat "${USER_FILE_NAME}.csv" >> "${USER_FILE_NAME}.xls"
 	
-	echo "------------------------"
+	echo "-------------------------------------------"
 	echo "Created  CSV file '${USER_FILE_NAME}.csv'."
-	echo "------------------------"	
+	echo "-------------------------------------------"	
 
 	
 	cd $PWD_ME
@@ -284,9 +316,9 @@ function createUserCsvFromJsons(){
 }
 
 function checkTimeout ()  {
-	echo "------------------------"
+	echo "-------------------------------------------"
 	echo "Checking for server timeout (set timeout: $TIMEOUT)"
-	echo "------------------------"
+	echo "-------------------------------------------"
 	CURL_STATUS=$(curl -u $USER:$PASS -s -w %{http_code} --connect-timeout $TIMEOUT -o /dev/null $SERVERURL"/system/console/vmstat")
 }
 
@@ -546,13 +578,46 @@ else
 	if [ "$ONLY_USERS" = true ] ; then	
 		curlUsersJson
 	else
-		# This is only executed if >= AEM6
+	
+		
+		# This is only executed if > AEM6.3
+		if (( $(echo "$AEM_VERSION > 6.3" | bc -l) )); then 
+			echo "-------------------------------------------"
+			echo "AEM Version $AEM_VERSION >= AEM 6.4"
+			echo "-------------------------------------------"
+			
+			curlSystemOverview
+		else
+			echo ">>> AEM Version $AEM_VERSION < AEM 6.4 - not querying >=AEM6.4 stuff <<<"
+		fi
+		
+		# This is only executed if > AEM6.2
+		if (( $(echo "$AEM_VERSION > 6.2" | bc -l) )); then 
+			echo "-------------------------------------------"
+			echo "AEM Version $AEM_VERSION >= AEM 6.3"
+			echo "-------------------------------------------"
+			
+			curlSlingHealthChecks
+		else
+			echo ">>> AEM Version $AEM_VERSION < AEM 6.3 - not querying >=AEM6.3 stuff <<<"
+		fi
+	
+		# This is only executed if >= AEM6.x
 		if [[ $AEM_VERSION == 6.* ]]; then 
+			echo "-------------------------------------------"
+			echo "Collecting items for AEM Version $AEM_VERSION >= AEM 6.0"
+			echo "-------------------------------------------"
+			
 			curlGraniteQueryPerformance
-			curlIndexesJson
+			curlOakIndexDefinitions
+		else
+			echo ">>> AEM Version $AEM_VERSION < AEM 6.0 - not querying AEM6.x stuff <<<"
 		fi
 		
 		# This collects server information
+		echo "-------------------------------------------"
+		echo "Collecting items for all AEM versions"
+		echo "-------------------------------------------"
 		curlConfigurationStatus
 		curlBundleJson
 		curlCrxPackages
