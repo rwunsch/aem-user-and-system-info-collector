@@ -1,19 +1,20 @@
 #!/bin/bash
 
 #######################################################################################
-# version 1.4
+# version 1.6
 #
-# Revised at 2016/10/24
+# Revised at 2019/06/13
 #
 # Edited by Robert Wunsch  wunsch@adobe.com
 #
 ## Version 
+#   v1.6 (13-jun-19) : Added nodeCounter.txt. 
 #   v1.5 (18-Nov-16) : Added '-w' parameter for wait time. Default is 3 sec. Set "0" for fastest execution.  
 #   v1.4 (24-Oct-16) : Adding the parameter 'n', which only queries user and created a CSV and XLS file from all servers combined
 #   v1.3 (23-Sep-16) : Removing '-J' in CURL commands due to this not being available at a client version of CURL
-#   v1.2 (19-Sep-16): rdeduce user.json query - nodedepth to "2" -due to server returning massive amounts of "notification entries" in the user-node
-# 	v1.1 (6-Sep-16): add timeout parameter and default timeout check 
-#   v1.0 (1-Sep-16): first release
+#   v1.2 (19-Sep-16) : rdeduce user.json query - nodedepth to "2" -due to server returning massive amounts of "notification entries" in the user-node
+# 	v1.1 (6-Sep-16)  : add timeout parameter and default timeout check 
+#   v1.0 (1-Sep-16)  : first release
 # 
 # Sample Usage:
 # -------------
@@ -152,7 +153,7 @@ function curlBundleJson(){
 	echo "-------------------------------------------"
 	if [ "$VERBOSE" = true ] ; then
 		echo "executing: "
-		echo "	curl -u $USER:$PASSWORD -O -J -k $SERVERURL/system/console/bundles.json"
+		echo "	curl -u $USER:$PASSWORD -s -k -o bundles.json $SERVERURL/system/console/bundles.json"
 		#echo "	-O : Download"
 		#echo "	-J : User File-Name used on Server"
 		echo "	-s : Does not output error messages"
@@ -169,7 +170,7 @@ function curlCrxPackages(){
 	echo "-------------------------------------------"
 	if [ "$VERBOSE" = true ] ; then
 		echo "executing: "
-		echo "	curl -u $USER:$PASSWORD -k -o package_list.xml $SERVERURL/crx/packmgr/service.jsp?cmd=ls"
+		echo "	curl -u $USER:$PASSWORD -s -k -o package_list.xml $SERVERURL/crx/packmgr/service.jsp?cmd=ls"
 		echo "	-s : Does not output error messages"
 		echo "	-o : Download directory"
 		echo "	-k : allow insecure SSL connections"
@@ -184,7 +185,7 @@ function curlOakIndexDefinitions(){
 	echo "-------------------------------------------"
 	if [ "$VERBOSE" = true ] ; then
 		echo "executing: "
-		echo "	curl -u $USER:$PASSWORD -k -o oak-index-definitions.json $SERVERURL/oak:index.tidy.-1.json"
+		echo "	curl -u $USER:$PASSWORD -s -k -o oak-index-definitions.json $SERVERURL/oak:index.tidy.-1.json"
 		echo "	-s : Does not output error messages"
 		echo "	-o : Download directory"
 		echo "	-k : allow insecure SSL connections"
@@ -200,7 +201,7 @@ function curlUsersJson(){
 	echo "-------------------------------------------"
 	if [ "$VERBOSE" = true ] ; then
 		echo "executing: "
-		echo "	curl -u $USER:$PASSWORD -k -o users.json $SERVERURL/bin/querybuilder.json?property=jcr:primaryType&property.value=rep:User&p.limit=-1&p.hits=full&p.nodedepth=2"
+		echo "	curl -u $USER:$PASSWORD -s -k -o  users.json $SERVERURL/bin/querybuilder.json?property=jcr:primaryType&property.value=rep:User&p.limit=-1&p.hits=full&p.nodedepth=2"
 		echo "	-s : Does not output error messages"
 		echo "	-o : Download directory"
 		echo "	-k : allow insecure SSL connections"
@@ -215,12 +216,27 @@ function curlGraniteQueryPerformance(){
 	echo "-------------------------------------------"
 	if [ "$VERBOSE" = true ] ; then
 		echo "executing: "
-		echo "	curl -u $USER:$PASSWORD -s -o -k  graniteQueryPerformance.txt $SERVERURL/libs/granite/operations/content/diagnosis/tool.html/_granite_queryperformance"
+		echo "	curl -u $USER:$PASSWORD -s -k -o graniteQueryPerformance.txt $SERVERURL/libs/granite/operations/content/diagnosis/tool.html/_granite_queryperformance"
 		echo "	-s : Does not output error messages"
 		echo "	-o : Download directory"
 		echo "	-k : allow insecure SSL connections"
 	fi
 	curl -u $USER:$PASS -s -k -o "graniteQueryPerformance.html" $CURL_NON_VERBOSE $SERVERURL"/libs/granite/operations/content/diagnosis/tool.html/_granite_queryperformance" 
+}
+
+### Retrive NodeCounter 
+function curlNodeCounter(){
+	echo "-------------------------------------------"
+	echo "Collecting 'nodeCounter.txt'"
+	echo "-------------------------------------------"
+	if [ "$VERBOSE" = true ] ; then
+		echo "executing: "
+		echo "	curl -u $USER:$PASSWORD -s -k -o nodeCounter.txt $SERVERURL/system/console/jmx/org.apache.jackrabbit.oak:name=nodeCounter,type=NodeCounter/op/getEstimatedChildNodeCounts/java.lang.String,int --data 'path=/&level=3'"
+		echo "	-s : Does not output error messages"
+		echo "	-o : Download directory"
+		echo "	-k : allow insecure SSL connections"
+	fi
+	curl -v -u $USER:$PASS -s -k -o "nodeCounter.txt" -X POST $CURL_NON_VERBOSE $SERVERURL'/system/console/jmx/org.apache.jackrabbit.oak:name=nodeCounter,type=NodeCounter/op/getEstimatedChildNodeCounts/java.lang.String,int' --data 'path=/&level=3'
 }
 
 ### Retrive Systemoverview (since 6.4)
@@ -230,7 +246,7 @@ function curlSystemOverview(){
 	echo "-------------------------------------------"
 	if [ "$VERBOSE" = true ] ; then
 		echo "executing: "
-		echo "	curl -u $USER:$PASSWORD -s -o -k  graniteQueryPerformance.txt $SERVERURL/libs/granite/operations/content/systemoverview/export.json"
+		echo "	curl -u $USER:$PASSWORD -s -k -o graniteQueryPerformance.txt $SERVERURL/libs/granite/operations/content/systemoverview/export.json"
 		echo "	-s : Does not output error messages"
 		echo "	-o : Download directory"
 		echo "	-k : allow insecure SSL connections"
@@ -245,14 +261,13 @@ function curlSlingHealthChecks(){
 	echo "-------------------------------------------"
 	if [ "$VERBOSE" = true ] ; then
 		echo "executing: "
-		echo "	curl -u $USER:$PASSWORD -s -o -k  graniteQueryPerformance.txt $SERVERURL/system/console/healthcheck?tags=&debug=true&overrideGlobalTimeout="
+		echo "	curl -u $USER:$PASSWORD -s -k -o healthChecks.html $SERVERURL/system/console/healthcheck?tags=&debug=true&overrideGlobalTimeout="
 		echo "	-s : Does not output error messages"
 		echo "	-o : Download directory"
 		echo "	-k : allow insecure SSL connections"
 	fi
 	curl -u $USER:$PASS -s -k -o "healthChecks.html" $CURL_NON_VERBOSE $SERVERURL"/system/console/healthcheck?tags=&debug=true&overrideGlobalTimeout=" 
 }
-
 
 ### Iterate through all folders, find "users.json", copy to "users" folder, rename to folder/server-name
 function getAllUserJsonAndStoreToOneFolder(){
@@ -618,10 +633,11 @@ else
 		echo "-------------------------------------------"
 		echo "Collecting items for all AEM versions"
 		echo "-------------------------------------------"
-		curlConfigurationStatus
+		curlNodeCounter
 		curlBundleJson
 		curlCrxPackages
 		curlUsersJson
+		curlConfigurationStatus
 	fi
 	
 

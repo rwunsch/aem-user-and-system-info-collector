@@ -41,7 +41,8 @@ http://localhost:4506,AEM_6.2_Server-Goofy,wunsch,next-password
 
 
 ## Version 
-	* v1.5 (18-Nov-16) : Added '-w' parameter for wait time. Default is 3 sec. Set "0" for fastest execution.  
+	* v1.6 (13-jun-19) : Added nodeCounter.txt. 
+    * v1.5 (18-Nov-16) : Added '-w' parameter for wait time. Default is 3 sec. Set "0" for fastest execution.  
 	* v1.4 (24-Oct-16) : Adding the parameter 'n', which only queries user and created a CSV and XLS file from all servers combined
 	* v1.3 (23-Sep-16) : Removing '-J' in CURL commands due to this not being available at a client version of CURL
 	* v1.2 (19-Sep-16): reduce user.json query - nodedepth to "2" -due to server returning massive amounts of "notification entries" in the user-node
