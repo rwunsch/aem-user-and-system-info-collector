@@ -193,6 +193,35 @@ function curlOakIndexDefinitions(){
 	curl -u $USER:$PASS -s -k -o "oak-index-definitions.json"  $CURL_NON_VERBOSE $SERVERURL"/oak:index.tidy.-1.json"
 }
 
+# Collecting "replication.agents.author.json" for use to check on replication-agent settings
+function curlReplicationAgentsAuthor(){
+	echo "-------------------------------------------"
+	echo "Collecting 'replication.agents.author.json'"
+	echo "-------------------------------------------"
+	if [ "$VERBOSE" = true ] ; then
+		echo "executing: "
+		echo "	curl -u $USER:$PASSWORD -s -k -o replication.agents.author.json $SERVERURL/etc/replication/agents.author.-1.json"
+		echo "	-s : Does not output error messages"
+		echo "	-o : Download directory"
+		echo "	-k : allow insecure SSL connections"
+	fi
+	curl -u $USER:$PASS -s -k -o "replication.agents.author.json"  $CURL_NON_VERBOSE $SERVERURL"/etc/replication/agents.author.-1.json"
+}
+
+# Collecting "replication.agents.publish.json" for use to check on replication-agent settings
+function curlReplicationAgentsPublish(){
+	echo "-------------------------------------------"
+	echo "Collecting 'replication.agents.publish.json'"
+	echo "-------------------------------------------"
+	if [ "$VERBOSE" = true ] ; then
+		echo "executing: "
+		echo "	curl -u $USER:$PASSWORD -s -k -o replication.agents.author.json $SERVERURL/etc/replication/agents.publish.-1.json"
+		echo "	-s : Does not output error messages"
+		echo "	-o : Download directory"
+		echo "	-k : allow insecure SSL connections"
+	fi
+	curl -u $USER:$PASS -s -k -o "replication.agents.publish.json"  $CURL_NON_VERBOSE $SERVERURL"/etc/replication/agents.publish.-1.json"
+}
 
 # Collecting "users.json" to be able to determine named-users
 function curlUsersJson(){
@@ -637,6 +666,8 @@ else
 		curlBundleJson
 		curlCrxPackages
 		curlUsersJson
+		curlReplicationAgentsAuthor
+		curlReplicationAgentsPublish
 		curlConfigurationStatus
 	fi
 	
